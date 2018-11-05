@@ -9,21 +9,74 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class GroceryController {
+    /**
+     *  ----------------ROUTES----------------------
+     */
 
+    /**
+     * @route /all
+     * @return list of existing grocery items
+     */
     @GetMapping("/all")
     @ResponseBody
-    List<GroceryItem> getGroceries () {
+    List<GroceryItem> getGroceries() {
         List<GroceryItem> items = dbGetAll();
-        System.out.println(items.toString());
         return items;
     }
 
-    private List<GroceryItem> dbGetAll () {
+    /**
+     * @route /id/{id}
+     * @param String id
+     * @return item with matching id
+     */
+    @GetMapping("/id/{id}")
+    @ResponseBody
+    GroceryItem getItem(@PathVariable String id) {
+        GroceryItem item = dbGetItem(id);
+        return item;
+    }
+
+    /**
+     * @route /available/{id}/{amount}
+     * @param String id of item
+     * @param String amount of the item
+     * @return Boolean if item can be purchased
+     */
+    @GetMapping("/available/{id}/{amount}")
+    @ResponseBody
+    Boolean available(@PathVariable String id, @PathVariable int amount) {
+        boolean isAvailable = dbAvailable(id, amount);
+        return isAvailable;
+    }
+
+    /**
+     * @route /purchase
+     * @param String [] ids of the items to be purchased
+     * @return Boolean purchased, whether or not the transaction was succesful
+     */
+    @PostMapping("/purchase")
+    @ResponseBody
+    Boolean purchase(@RequestParam(value = "ids") String[] ids) {
+        boolean purchased = dbPurchase(ids);
+        return purchased;
+    }
+
+    /**
+     * Helper functions
+     */
+
+    /**
+     * Function that make HTTPRequest to the grocdb route: /getAll
+     * @return list of existing grocery items
+     */
+    private List<GroceryItem> dbGetAll() {
         String url = "http://localhost:8081/getAll";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<GroceryItem>> result = restTemplate.exchange(
@@ -34,14 +87,11 @@ public class GroceryController {
         return result.getBody();
     }
 
-    @GetMapping ("/id/{id}")
-    @ResponseBody
-    GroceryItem getItem(@PathVariable String id) {
-        GroceryItem item = dbGetItem(id);
-        return item;
-    }
-
-    private GroceryItem dbGetItem (String id) {
+    /**
+     * Function that make HTTPRequest to the grocdb route: /id/{id}
+     * @return GroceryItem item with matching id
+     */
+    private GroceryItem dbGetItem(String id) {
         String url = "http://localhost:8081/id/" + id;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<GroceryItem> result = restTemplate.exchange(
@@ -52,14 +102,10 @@ public class GroceryController {
         return result.getBody();
     }
 
-    @GetMapping ("/available/{id}/{amount}")
-    @ResponseBody
-    Boolean available(@PathVariable String id, @PathVariable int amount) {
-        boolean isAvailable = dbAvailable(id, amount);
-        return isAvailable;
-    }
-
-
+    /**
+     * Function that make HTTPRequest to the grocdb route: /available/{id}/{amount}
+     * @return boolean available
+     */
     private boolean dbAvailable(String id, int amount) {
         String url = "http://localhost:8081/available/" + id + "/" + amount;
         RestTemplate restTemplate = new RestTemplate();
@@ -72,24 +118,19 @@ public class GroceryController {
         return result.getBody();
     }
 
-    @PostMapping ("/purchase")
-    @ResponseBody
-    Boolean purchase(@RequestParam String id, @RequestParam int amount) {
-        boolean purchased = dbPurchase(id, amount);
-        return purchased;
-    }
-
-    private boolean dbPurchase(String id, int amount) {
+    /**
+     * Function that make HTTPRequest to the grocdb route: /purchase
+     * @param String [] ids
+     * @return boolean succesful purchase
+     */
+    private boolean dbPurchase(String[] ids) {
         String url = "http://localhost:8081/purchase";
         // Create the request body as a MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-
-        body.add("id", id);
-        body.add("amount", Integer.toString(amount));
-
-        // Note the body object as first parameter!
+        for (int i = 0; i < ids.length; i++) {
+            body.add("ids", ids[i]);
+        }
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, null);
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Boolean> result = restTemplate.exchange(
                 url,
@@ -99,8 +140,5 @@ public class GroceryController {
                 });
         return result.getBody();
     }
-
-
-
 
 }
