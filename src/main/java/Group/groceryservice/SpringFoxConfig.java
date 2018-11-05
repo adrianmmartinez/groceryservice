@@ -1,3 +1,7 @@
+/**
+ * Config that enables Swagger2 Documentation
+ */
+
 package Group.groceryservice;
 
 import org.springframework.context.annotation.Bean;
@@ -26,6 +30,9 @@ public class SpringFoxConfig {
                 .apiInfo(getApiInfo());
     }
 
+    /**
+     * Specifies data for docs
+     */
     private ApiInfo getApiInfo() {
         return new ApiInfo(
                 "GroceryService",
