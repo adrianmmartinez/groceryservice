@@ -24,6 +24,7 @@ public class GroceryController {
      * @route /all
      * @return list of existing grocery items
      */
+    @CrossOrigin()
     @GetMapping("/all")
     @ResponseBody
     List<GroceryItem> getGroceries() {
@@ -36,6 +37,7 @@ public class GroceryController {
      * @param String id
      * @return item with matching id
      */
+    @CrossOrigin()
     @GetMapping("/id/{id}")
     @ResponseBody
     GroceryItem getItem(@PathVariable String id) {
@@ -49,6 +51,7 @@ public class GroceryController {
      * @param String amount of the item
      * @return Boolean if item can be purchased
      */
+    @CrossOrigin()
     @GetMapping("/available/{id}/{amount}")
     @ResponseBody
     Boolean available(@PathVariable String id, @PathVariable int amount) {
@@ -61,6 +64,7 @@ public class GroceryController {
      * @param String [] ids of the items to be purchased
      * @return Boolean purchased, whether or not the transaction was succesful
      */
+    @CrossOrigin()
     @PostMapping("/purchase")
     @ResponseBody
     Boolean purchase(@RequestParam(value = "ids") String[] ids) {
@@ -77,7 +81,7 @@ public class GroceryController {
      * @return list of existing grocery items
      */
     private List<GroceryItem> dbGetAll() {
-        String url = "http://localhost:8081/getAll";
+        String url = "https://userdb438.herokuapp.com/getAll";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<GroceryItem>> result = restTemplate.exchange(
                 url,
@@ -92,7 +96,7 @@ public class GroceryController {
      * @return GroceryItem item with matching id
      */
     private GroceryItem dbGetItem(String id) {
-        String url = "http://localhost:8081/id/" + id;
+        String url = "https://userdb438.herokuapp.com/id/" + id;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<GroceryItem> result = restTemplate.exchange(
                 url,
@@ -107,7 +111,7 @@ public class GroceryController {
      * @return boolean available
      */
     private boolean dbAvailable(String id, int amount) {
-        String url = "http://localhost:8081/available/" + id + "/" + amount;
+        String url = "https://userdb438.herokuapp.com/available/" + id + "/" + amount;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Boolean> result = restTemplate.exchange(
                 url,
@@ -124,7 +128,7 @@ public class GroceryController {
      * @return boolean succesful purchase
      */
     private boolean dbPurchase(String[] ids) {
-        String url = "http://localhost:8081/purchase";
+        String url = "https://userdb438.herokuapp.com/purchase";
         // Create the request body as a MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         for (int i = 0; i < ids.length; i++) {
