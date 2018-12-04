@@ -81,7 +81,7 @@ public class GroceryController {
      * @return list of existing grocery items
      */
     private List<GroceryItem> dbGetAll() {
-        String url = "https://userdb438.herokuapp.com/getAll";
+        String url = "https://grocdb.herokuapp.com/getAll";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<GroceryItem>> result = restTemplate.exchange(
                 url,
@@ -96,7 +96,7 @@ public class GroceryController {
      * @return GroceryItem item with matching id
      */
     private GroceryItem dbGetItem(String id) {
-        String url = "https://userdb438.herokuapp.com/id/" + id;
+        String url = "https://grocdb.herokuapp.com/id/" + id;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<GroceryItem> result = restTemplate.exchange(
                 url,
@@ -111,7 +111,7 @@ public class GroceryController {
      * @return boolean available
      */
     private boolean dbAvailable(String id, int amount) {
-        String url = "https://userdb438.herokuapp.com/available/" + id + "/" + amount;
+        String url = "https://grocdb.herokuapp.com/available/" + id + "/" + amount;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Boolean> result = restTemplate.exchange(
                 url,
@@ -128,7 +128,7 @@ public class GroceryController {
      * @return boolean succesful purchase
      */
     private boolean dbPurchase(String[] ids) {
-        String url = "https://userdb438.herokuapp.com/purchase";
+        String url = "https://grocdb.herokuapp.com/purchase";
         // Create the request body as a MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         for (int i = 0; i < ids.length; i++) {
